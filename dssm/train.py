@@ -4,10 +4,15 @@ import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), '../'))
 
 from dssm.graph import Graph
-import tensorflow as tf
+#import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 from utils.load_data import load_char_data
 from dssm import args
 
+#tf.compat.v1.get_variable_scope().reuse_variables() 
+tf.get_variable_scope().reuse_variables() 
+#  表示可以重复使用get_variable()得到的variable。
 p, h, y = load_char_data('input/train.csv', data_size=None)
 p_eval, h_eval, y_eval = load_char_data('input/dev.csv', data_size=None)
 
@@ -16,6 +21,7 @@ h_holder = tf.placeholder(dtype=tf.int32, shape=(None, args.seq_length), name='h
 y_holder = tf.placeholder(dtype=tf.int32, shape=None, name='y')
 
 dataset = tf.data.Dataset.from_tensor_slices((p_holder, h_holder, y_holder))
+#dataset = tf.contrib.data.Dataset.from_tensor_slices((p_holder, h_holder, y_holder))
 dataset = dataset.batch(args.batch_size).repeat(args.epochs)
 iterator = dataset.make_initializable_iterator()
 next_element = iterator.get_next()
