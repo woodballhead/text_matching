@@ -1,4 +1,7 @@
-import tensorflow as tf
+#import tensorflow as tf
+
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 from dssm import args
 
 
@@ -9,8 +12,8 @@ class Graph:
         self.y = tf.placeholder(dtype=tf.int32, shape=None, name='y')
 
         self.keep_prob = tf.placeholder(dtype=tf.float32, name='drop_rate')
-
-        self.embedding = tf.get_variable(dtype=tf.float32, shape=(args.vocab_size, args.char_embedding_size),
+#  reuse=tf.AUTO_REUSE,
+        self.embedding = tf.get_variable(dtype=tf.float32,  shape=(args.vocab_size, args.char_embedding_size),
                                          name='embedding')
 
         self.forward()
@@ -32,7 +35,7 @@ class Graph:
     @staticmethod
     def cosine(p, h):
         p_norm = tf.norm(p, axis=1, keepdims=True)
-        h_norm = tf.norm(, axis=1, keepdims=True)
+        h_norm = tf.norm(h, axis=1, keepdims=True)
 
         cosine = tf.reduce_sum(tf.multiply(p, h), axis=1, keepdims=True) / (p_norm * h_norm)
 
